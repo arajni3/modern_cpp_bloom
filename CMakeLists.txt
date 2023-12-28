@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.1)
 project(ModernCPPBloom)
 
+
+#[[ Depending on some CPU architectures, may need to align to more than one 
+cache line to avoid false sharing for prefetched blocks, e.g., 
+64 * 2 = 128 bytes. Also, the cache line size may not be 64 bytes, though it is on 
+most CPU architectures.
+]]
+add_compile_definitions(ALIGN_NO_FALSE_SHARING=64)
+
 set(ModernCPPBloom_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 #
