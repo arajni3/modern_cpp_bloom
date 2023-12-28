@@ -47,6 +47,7 @@ OPTION(ModernCPPBloom_BUILD_TESTS "ModernCPPBloom test suite" OFF)
 # install
 
 add_library(ModernCPPBloom INTERFACE)
+include_directories(${CMAKE_SOURCE_DIR}/gcem/include)
 target_include_directories(ModernCPPBloom INTERFACE $<BUILD_INTERFACE:${ModernCPPBloom_INCLUDE_DIR}>
                                           $<INSTALL_INTERFACE:include>)
 
