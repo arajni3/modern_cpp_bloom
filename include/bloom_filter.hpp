@@ -265,7 +265,7 @@ int bloom_filter_add_string_alt(BloomFilter<num_elements, false_pos_prob> *bf, u
         return BLOOM_FAILURE;
     }
 
-    #pragma omp parallel for
+    #pragma omp parallel for shared(bf)
     for (unsigned int i = 0; i < bf->number_hashes; ++i) {
         unsigned long idx = (hashes[i] % bf->number_bits) / 8;
         int bit = (hashes[i] % bf->number_bits) % 8;
@@ -287,15 +287,15 @@ int bloom_filter_check_string_alt(BloomFilter<num_elements, false_pos_prob> *bf,
     }
 
     unsigned int i;
-    int r = BLOOM_SUCCESS;
+    int r = 0;
 
-    #pragma omp parallel for
+    #pragma omp parallel for shared(bf)
     for (i = 0; i < bf->number_hashes; ++i) {
         #pragma omp atomic update
-        r = CHECK_BIT(bf->bloom, (hashes[i] % bf->number_bits));
+        r += CHECK_BIT(bf->bloom, (hashes[i] % bf->number_bits));
     }
 
-    return r;
+    return r == bf->number_hashes ? BLOOM_SUCCESS : BLOOM_FAILURE;
 }
 
 template<uint64_t num_elements, float false_pos_prob>
